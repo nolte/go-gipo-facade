@@ -1,0 +1,25 @@
+version: "3.7"
+
+services:
+  vscode:
+    image: "docker.pkg.github.com/nolte/vscode-devcontainers/devops:latest"
+    volumes:
+      - "../:/go/src/github.com/nolte/go-gipo-facade:cached"
+      - ~/.ssh:/home/vscode/.ssh:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      ## reuse volumes for extensions
+      - go-gipo-facade-vol:/home/vscode/.vscode-server/extensions
+      # And/or for VS Code Insiders
+      - go-gipo-facade-vol-insiders:/home/vscode/.vscode-server-insiders/extension      
+    environment:
+      - TZ=Europe/Berlin # $(cat /etc/timezone)
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
+    entrypoint: zsh -c "while sleep 1000; do :; done"
+    network_mode: "host"
+
+volumes:
+  go-gipo-facade-vol:
+  go-gipo-facade-vol-insiders:
